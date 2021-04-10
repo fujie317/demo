@@ -2,10 +2,22 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" th:href="@{/images/favicon.jpg}" sizes="264x270" type="image/jpg">
+<link rel="stylesheet" th:href="@{/css/style.css}">
 <title>Taco Design</title>
+<script type="text/javascript" th:src="@{/js/jquery.js}">
+<script type="text/javascript">
+	function test(person){
+		$("#person").text(person.getFirstName() + " " + person.getLastName());
+	}
+	(function(){
+		$.getJSON("http://localhost:8080/demo/person?jsonp=test")
+	})
+</script>
 </head>
 <body>
 <h3 th:text="'demo project'">Taco design</h3>
 <img th:src="@{/images/TacoCloud.png}" />
+<p id="person"></p>
 </body>
 </html>

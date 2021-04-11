@@ -1,6 +1,6 @@
 package com.example.demo.domain;
 
-import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
@@ -9,20 +9,16 @@ import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.PrePersist;
-import javax.persistence.PreUpdate;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.CreationTimestamp;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.example.demo.domain.support.Auditable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.Data;
@@ -36,7 +32,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Entity
 @Table(name = "person")
-public class Person {
+public class Person extends Auditable<Person> {
 
 	@JsonIgnore
 	@Id
@@ -52,12 +48,12 @@ public class Person {
 	@Column(name = "lastName")
 	private String lastName;
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "person_aliases", joinColumns = { @JoinColumn(name = "personId") })
 	@Column(name = "aliases")
 	private Set<String> aliases;
 
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "personResidence", joinColumns = @JoinColumn(name = "personId"))
 	@AttributeOverride(name = "street", column = @Column(name = "street_address"))
 	private Set<Address> residences;
@@ -66,28 +62,15 @@ public class Person {
 	@AttributeOverride(name = "street", column = @Column(name = "street_address"))
 	private Address work;
 
-	@Temporal(value = TemporalType.DATE)
-	@CreationTimestamp
-	@JsonFormat(pattern = "dd MMM yyyy")
-	@Column(name = "createdOn", nullable = false)
-	private Date createdOn;
-
-	@Column(name = "lastModified")
-	@Temporal(value = TemporalType.TIMESTAMP)
-	private Date lastModified;
-
 	public Person(String firstName, String lastName) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 	}
 
 	@PrePersist
-	public void prePersist() {
-		this.createdOn = new Date();
-	}
-
-	@PreUpdate
-	public void preUpdate() {
-		this.lastModified = new Date();
+	public void onPrePersistPerson() {
+		this.aliases = new HashSet<String>();
+		this.residences = new HashSet<Address>();
+		this.work = new Address();
 	}
 }

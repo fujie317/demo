@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -68,6 +69,7 @@ public class AppController {
 	 */
 	@ResponseBody
 	@RequestMapping(path = "person", produces = MediaType.APPLICATION_JSON_VALUE)
+	@CacheResult
 	public Person getPerson(@RequestParam(value = "jsonp", required = true) String jsonp,
 			@ModelAttribute Person person) {
 		return person;

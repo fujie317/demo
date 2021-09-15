@@ -24,7 +24,6 @@ public class PersonFormatter implements Formatter<Person> {
 
 	@Override
 	public String print(Person object, Locale locale) {
-		
 		return object.getFirstName() + " " + object.getLastName();
 	}
 

@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import com.example.demo.domain.support.Auditable;
@@ -34,7 +35,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "person")
 public class Person extends Auditable<Person> {
 
-	@JsonIgnore
+	@JsonIgnore // Do NOT include this field when serializing objects of this class
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO) // Default strategy. No need to explicitly specify
 	@Column(name = "id", nullable = false)
@@ -48,9 +49,11 @@ public class Person extends Auditable<Person> {
 	@Column(name = "lastName")
 	private String lastName;
 
+	@Transient
+	private String username = "anonymous";
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "person_aliases", joinColumns = { @JoinColumn(name = "personId") })
-	@Column(name = "aliases")
 	private Set<String> aliases;
 
 	@ElementCollection(fetch = FetchType.EAGER)

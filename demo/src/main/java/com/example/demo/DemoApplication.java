@@ -8,7 +8,8 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import com.example.demo.repository.PersonRepository;
+import com.example.demo.domain.AppUser;
+import com.example.demo.service.AppuserServices;
 
 /**
  * @author Fujie Zhang
@@ -29,12 +30,14 @@ public class DemoApplication implements CommandLineRunner, ApplicationContextAwa
 	@Override
 	public void run(String... args) throws Exception {
 
-		PersonRepository repo = ctx.getBean(PersonRepository.class);
+		AppuserServices appuserServices = ctx.getBean(AppuserServices.class);
 
-		// Person person = new Person("John", "Doe");
-		var p = repo.findById(19L).get();
+		appuserServices.create(new AppUser("user1", "password1", "ROLE_USER", "ROLE_ADMIN"));
+		appuserServices.create(new AppUser("user2", "password2", "ROLE_USER"));
+		appuserServices.create(new AppUser("user3", "password3", "ROLE_USER"));
+		appuserServices.create(new AppUser("user4", "password4", "ROLE_USER"));
 
-//		p.getWork().setCity("Shenzhen");
+//		p.getWork().setCity("Toronto");
 //		Thread.sleep(1000, 0);
 //		repo.save(p);
 //		repo.save(person);

@@ -4,7 +4,9 @@ import javax.cache.annotation.CacheResult;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.example.demo.domain.Person;
+import com.example.demo.repository.PersonRepository;
 import com.example.demo.validation.PersonValidator;
 
 import lombok.extern.slf4j.Slf4j;
@@ -29,10 +32,18 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/")
 @Slf4j
 public class AppController {
+	private PersonRepository personRepository;
+
+	@Autowired
+	public AppController(PersonRepository personRepository) {
+		this.personRepository = personRepository;
+	}
 
 	@ModelAttribute
 	public Person getPerson() {
-		return new Person("Fujie", "Zhang");
+		Person person = new Person("Fujie", "Zhang");
+		person.setUsername(SecurityContextHolder.getContext().getAuthentication().getName());
+		return person;
 	}
 
 	@InitBinder
@@ -56,9 +67,8 @@ public class AppController {
 		 * 
 		 * } }
 		 */
-		String path = ServletUriComponentsBuilder.fromContextPath(request).path("/index").build().encode()
-				.toUriString();
-		log.info(path);
+		String path = ServletUriComponentsBuilder.fromContextPath(request).path("/home").build().encode().toUriString();
+		log.info(path + "/" + person.getUsername());
 		return "home";
 	}
 

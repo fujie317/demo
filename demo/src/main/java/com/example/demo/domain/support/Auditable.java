@@ -42,26 +42,22 @@ public abstract class Auditable<T> {
 	@Transient
 	private String lastAccessedBy;
 
-	@Transient
-	private String username = "Fujie";
-
-	// SecurityContextHolder().getAuthentication().getName();
-
 	@PrePersist
 	public void onPrePersist() {
 		this.createdDate = new Date();
-		this.createdBy = this.username;
+		this.lastModifiedDate = new Date();
+		;
 	}
 
 	@PreUpdate
 	public void onPreUpdate() {
 		this.lastModifiedDate = new Date();
-		this.lastModifiedBy = this.username;
+		;
 	}
 
 	@PostLoad
 	public void onPostLoad() {
-		log.info("Access by {}", this.username);
+		log.info("Access at {}", this.lastModifiedDate);
 	}
 
 }
